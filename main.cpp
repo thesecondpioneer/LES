@@ -2,7 +2,7 @@
 #include <vector>
 #include <cmath>
 using namespace std;
-vector<vector<double>> E(int n){
+vector<vector<double>> E(int n){ //identity matrix of size n
     vector<vector<double>> result (n);
     for (int i = 0; i<n; i++){
         result[i].resize(n,0);
@@ -10,7 +10,7 @@ vector<vector<double>> E(int n){
     }
     return result;
 }
-vector <vector<double>> orth(int n){
+vector <vector<double>> orth(int n){ //unit vector of size n
     vector <vector<double>> result(n);
     result[0].push_back(1);
     for(int i = 1; i < n; i++){
@@ -18,14 +18,14 @@ vector <vector<double>> orth(int n){
     }
     return result;
 }
-vector<double> getcolumn (vector<vector<double>> A, int k){
+vector<double> getcolumn (vector<vector<double>> A, int k){ //get a column of number k as a vector from a matrix
     vector<double> result;
     for(int i = 0; i < A.size(); i++){
         result.push_back(A[i][k]);
     }
     return result;
 }
-vector <vector<double>> msub (vector <vector<double>> A, vector <vector<double>> B){
+vector <vector<double>> msub (vector <vector<double>> A, vector <vector<double>> B){ //subtract matrix B from matrix A
     vector<vector<double>> result (A.size());
     for (int i = 0; i < result.size(); i++){
         result[i].resize(A[0].size());
@@ -44,7 +44,7 @@ double ger_sqrt(double u, double eps){ //square root
     }
     return res;
 }
-vector <vector<double>> mnumm(double a, vector <vector<double>> b){
+vector <vector<double>> mnumm(double a, vector <vector<double>> b){ //multiply a matrix by a number
     for (int i = 0; i < b.size(); i++){
         for(int j = 0; j < b[i].size(); j++) {
             b[i][j] = b[i][j]*a;
@@ -68,20 +68,20 @@ vector <vector<double>> mmultiply (vector <vector<double>> A, vector <vector<dou
         return C;
     }
 }
-double vnorm (vector<vector<double>> a){
+double vnorm (vector<vector<double>> a){ //euclidian norm of a vector
     double result = 0;
     for (auto i:a){
         result+=i[0]*i[0];
     }
     return ger_sqrt(result, pow(10,-10));
 }
-void normalize (vector<vector<double>>& a){
+void normalize (vector<vector<double>>& a){ //get a unit vector of the vector
     double p = vnorm(a);
     for (int i = 0; i < a.size(); i++){
         a[i][0] /= p;
     }
 }
-double mnorm(vector<vector<double>> A){
+double mnorm(vector<vector<double>> A){ // ||A||2,1 norm
     double result = 0;
     for(int i = 0; i < A[0].size(); i++){
         vector<double> curcol = getcolumn(A,i);
@@ -93,14 +93,14 @@ double mnorm(vector<vector<double>> A){
     }
     return result;
 }
-vector<vector<double>> transpose (vector<vector<double>> A){
+vector<vector<double>> transpose (vector<vector<double>> A){ //returns the transposed matrix
     vector<vector<double>> result (A[0].size());
     for(int i = 0; i < result.size(); i++){
         result[i] = getcolumn(A,i);
     }
     return result;
 }
-vector<vector<double>> getblock(vector<vector<double>> A, int a, int b){
+vector<vector<double>> getblock(vector<vector<double>> A, int a, int b){ //get a square submatrix of the matrix from the element of the (a,a) position to the element of (b,b) position
     vector<vector<double>> result(b-a+1);
     for(int i = 0; i < b-a+1; i++){
         result[i].resize(b-a+1);
@@ -110,14 +110,14 @@ vector<vector<double>> getblock(vector<vector<double>> A, int a, int b){
     }
     return result;
 }
-void insertblock(vector<vector<double>>& A, vector<vector<double>>B, int a){
+void insertblock(vector<vector<double>>& A, vector<vector<double>>B, int a){ //insert a block into your matrix with the (1,1) element of the block going into (a,a) element of matrix A
     for (int i = a; i < a + B.size(); i++){
         for (int j = a; j < a + B.size(); j++){
             A[i][j] = B[i-a][j-a];
         }
     }
 }
-pair<vector<vector<double>>,vector<vector<double>>> LUP (vector <vector<double>> A){
+pair<vector<vector<double>>,vector<vector<double>>> LUP (vector <vector<double>> A){ //returns a matrix that stores L,U and a matrix P (transposition matrix)
     vector <vector<double>> P(A.size());
     for(int i = 0; i < P.size(); i++){
         P[i].resize(A.size(),0);
@@ -143,7 +143,7 @@ pair<vector<vector<double>>,vector<vector<double>>> LUP (vector <vector<double>>
     }
     return make_pair(A,P);
 }
-vector <double> LUPsolve(vector <vector<double>> A, vector<vector<double>> b){
+vector <double> LUPsolve(vector <vector<double>> A, vector<vector<double>> b){ //solves the equation system by using the results of LUP function
     pair<vector<vector<double>>,vector<vector<double>>> LpUaP = LUP (A);
     vector<vector<double>> LU = LpUaP.first;
     b = mmultiply(LpUaP.second,b);
@@ -166,7 +166,7 @@ vector <double> LUPsolve(vector <vector<double>> A, vector<vector<double>> b){
     }
     return x;
 }
-pair <vector <vector<double>>, vector <vector<double>>> QR (vector <vector<double>> A, vector <vector<double>> b){
+pair <vector <vector<double>>, vector <vector<double>>> QR (vector <vector<double>> A, vector <vector<double>> b){ //Returns Q and R matrixes
     int n = A.size();
     vector <vector<double>> Q = E(n), R = A, w, z, y;
     for (int i = 0; i < n-1; i++){
