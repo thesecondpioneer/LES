@@ -81,7 +81,7 @@ void normalize (vector<vector<double>>& a){ //get a unit vector of the vector
         a[i][0] /= p;
     }
 }
-double NormInf(vector<vector<double>> A) {
+double NormInf(vector<vector<double>> A) { //  maximum absolute row sum of the matrix.
     double result = INT64_MIN, s = 0;
     for (int i = 0; i < A.size(); i++){
         for (int j = 0; j < A.size(); j++){
@@ -97,7 +97,7 @@ double NormInf(vector<vector<double>> A) {
     }
     return result;
 }
-double NormInfCol(vector<vector<double>> A) {
+double NormInfCol(vector<vector<double>> A) { //maximum absolute column sum of the matrix
     double result = INT64_MIN, s = 0;
     for (int i = 0; i < A.size(); i++){
         for (int j = 0; j < A.size(); j++){
@@ -110,18 +110,6 @@ double NormInfCol(vector<vector<double>> A) {
         else{
             s = INT64_MIN;
         }
-    }
-    return result;
-}
-double mnorm(vector<vector<double>> A){ // ||A||2,1 norm
-    double result = 0;
-    for(int i = 0; i < A[0].size(); i++){
-        vector<double> curcol = getcolumn(A,i);
-        double colnorm = 0;
-        for (auto j:curcol){
-            colnorm += j*j;
-        }
-        result+= ger_sqrt(colnorm,pow(10,-10));
     }
     return result;
 }
