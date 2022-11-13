@@ -187,8 +187,91 @@ pair <vector <vector<double>>, vector <vector<double>>> QR (vector <vector<doubl
     }
     return make_pair(Q,R);
 }
+vector<double> QRsolve (pair <vector <vector<double>>, vector <vector<double>>> decomp, vector<vector<double>> b){ //returns a solution using the results of QR function
+    vector<double> y = getcolumn(mmultiply(transpose(decomp.first),b),0);
+    vector<double> x = y;
+    for(int i = b.size()-1; i>=0; i--){
+        for (int k = i+1; k<b.size(); k++){
+            x[i] -= decomp.second[i][k]*x[k];
+        }
+        x[i] = x[i]/decomp.second[i][i];
+    }
+    return x;
+}
+vector<double> FPISolve(vector <vector<double>> A, vector<vector<double>> b, double eps){ //returns a solution approximated using fixed-point iterations
+    double mu = 1/ NormInfCol(A);
+    vector<vector<double>> B = msub(E(A.size()),mnumm(mu,A));
+    double (*mnorm)(vector<vector<double>>) = nullptr;
+    if(NormInf(B) < 1){
+        mnorm = &NormInf;
+    }
+    else{
+        if (NormInfCol(B) < 1){
+            mnorm = &NormInfCol;
+        }
+        else{
+            vector<vector<double>> AT = transpose(A);
+            A = mmultiply(AT,A);
+            b = mmultiply(AT,b);
+            AT.clear();
+            mu = 1/ NormInfCol(A);
+            B = msub(E(A.size()),mnumm(mu,A));
+            if(NormInf(B) < 1){
+                mnorm = &NormInf;
+            }
+            else {
+                if (NormInfCol(B) < 1) {
+                    mnorm = &NormInfCol;
+                }
+            }
+        }
+    }
+    vector<vector<double>> c = mnumm(mu,b);
+    vector<vector<double>> x, xprev;
+    x = c;
+    if(mnorm!= nullptr){
+        double normb = mnorm(B);
+        do{
+            xprev = x;
+            x = msub(mmultiply(B,x), mnumm(-1,c));
+        }while((normb/(1-normb))* vnorm(msub(x,xprev)) > eps);
+    }
+    else{
+        do{
+            x = msub(mmultiply(B,x), mnumm(-1,c));
+        }while(vnorm(msub(mmultiply(A,x),b)) > eps);
+    }
+    return getcolumn(x,0);
+}
+vector <double> SeidelSolve (vector <vector<double>> A, vector<vector<double>> b, double eps){ //returns a solution approximated using Gauss-Seidel iterative process.
+    vector<vector<double>>x;
+    vector <vector<double>> C = A;
+    vector <vector<double>> d = b;
+    for(int i = 0; i < C.size(); i++){
+        double diag = C[i][i];
+        C[i][i] = 0;
+        for(int j = 0; j <C.size(); j++){
+            if(i!=j){
+                C[i][j] = -C[i][j]/diag;
+            }
+        }
+        d[i][0] = d[i][0]/diag;
+    }
+    x = d;
+    do {
+        for (int i = 0; i < C.size(); i++) {
+            double xtemp = 0;
+            for (int j = 0; j < C.size(); j++) {
+                xtemp += C[i][j] * x[j][0];
+            }
+            x[i][0] = xtemp;
+            x[i][0] += d[i][0];
+        }
+    }while(vnorm(msub(mmultiply(A,x),b)) > eps);
+    return getcolumn(x,0);
+}
 int main() {
-    int n;
+     int n;
     cin >> n;
     vector <vector<double>> A(n);
     vector <vector<double>> b(n);
@@ -203,6 +286,14 @@ int main() {
         }
     }
     vector <double> x = LUPsolve(A,b);
+    for (int i = 0; i < n; i++){
+        cout << "x" << i << " = " << x[i] << endl;
+    }
+    x = FPISolve(A,b,pow(10,-3));
+    for (int i = 0; i < n; i++){
+        cout << "x" << i << " = " << x[i] << endl;
+    }
+    x = SeidelSolve(A,b,pow(10,-3));
     for (int i = 0; i < n; i++){
         cout << "x" << i << " = " << x[i] << endl;
     }
