@@ -1,3 +1,3 @@
 # LESS
-Sometimes less is more. This time it is.
-An unoptimized mess that solves linear equation systems using LU and QR decomposition (more to come)
+
+An unoptimized mess that solves linear equation systems using LU, QR decompositions, also Gauss-Seidel and fixed-point of iterative processes.
