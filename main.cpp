@@ -81,6 +81,38 @@ void normalize (vector<vector<double>>& a){ //get a unit vector of the vector
         a[i][0] /= p;
     }
 }
+double NormInf(vector<vector<double>> A) {
+    double result = INT64_MIN, s = 0;
+    for (int i = 0; i < A.size(); i++){
+        for (int j = 0; j < A.size(); j++){
+            s += abs(A[i][j]);
+        }
+        if (s > result){
+            result = s;
+            s = INT64_MIN;
+        }
+        else{
+            s = INT64_MIN;
+        }
+    }
+    return result;
+}
+double NormInfCol(vector<vector<double>> A) {
+    double result = INT64_MIN, s = 0;
+    for (int i = 0; i < A.size(); i++){
+        for (int j = 0; j < A.size(); j++){
+            s += abs(A[j][i]);
+        }
+        if (s > result){
+            result = s;
+            s = INT64_MIN;
+        }
+        else{
+            s = INT64_MIN;
+        }
+    }
+    return result;
+}
 double mnorm(vector<vector<double>> A){ // ||A||2,1 norm
     double result = 0;
     for(int i = 0; i < A[0].size(); i++){
