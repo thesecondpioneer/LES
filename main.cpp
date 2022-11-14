@@ -317,8 +317,11 @@ vector <double> SeidelSolve (vector <vector<double>> A, vector<vector<double>> b
     return getcolumn(x,0);
 }
 int main() {
+    cout.precision(20);
     int n;
+    int epsp;
     cin >> n;
+    vector<double> xa(n);
     vector <vector<double>> A(n);
     vector <vector<double>> b(n);
     for (int i = 0; i < n; i++){
@@ -331,25 +334,50 @@ int main() {
             cin >> A[i][j];
         }
     }
+    for (int i = 0; i < n; i++){
+        cin >> xa[i];
+    }
+    cin >> epsp;
     cout << "LU decomposition" << endl;
     vector <double> x = LUPsolve(A,b);
     for (int i = 0; i < n; i++){
         cout << "x" << i << " = " << x[i] << endl;
     }
+    double c = 0;
+    for(int i = 0; i < n; i++){
+        c += pow(x[i]-xa[i],2);
+    }
+    cout << "d = " << sqrt(c) << endl;
     cout << "QR decomposition" << endl;
     x = QRsolve(A,b);
     for (int i = 0; i < n; i++){
         cout << "x" << i << " = " << x[i] << endl;
     }
-    x = FPISolve(A,b,pow(10,-3));
+    c = 0;
+    for(int i = 0; i < n; i++){
+        c += pow(x[i]-xa[i],2);
+    }
+    cout << "d = " << sqrt(c) << endl;
+    x = FPISolve(A,b,pow(10,epsp));
     cout << "Fixed-point iterations" << endl;
     for (int i = 0; i < n; i++){
         cout << "x" << i << " = " << x[i] << endl;
     }
     cout << x[n] << " iterations" << endl;
-    x = SeidelSolve(A,b,pow(10,-3));
+    c = 0;
+    for(int i = 0; i < n; i++){
+        c += pow(x[i]-xa[i],2);
+    }
+    cout << "d = " << sqrt(c) << endl;
+    cout << "Seidel method" << endl;
+    x = SeidelSolve(A,b,pow(10,epsp));
     for (int i = 0; i < n; i++){
         cout << "x" << i << " = " << x[i] << endl;
     }
     cout << x[n] << " iterations" << endl;
+    c = 0;
+    for(int i = 0; i < n; i++){
+        c += pow(x[i]-xa[i],2);
+    }
+    cout << "d = " << sqrt(c) << endl;
 }
