@@ -337,10 +337,10 @@ int main() {
     //for (int i = 0; i < n; i++){
  //       cin >> xa[i];
   //  }
-    xa[0] = (0);
-    xa[1] = (0);
-    xa[2] = 0;
-    xa[3] = (double(1000)/1009);
+   // xa[0] = (0);
+    //xa[1] = (0);
+   // xa[2] = 0;
+   // xa[3] = (double(1000)/1009); was running tests lol
     cin >> epsp;
     cout << "LU decomposition" << endl;
     vector <double> x = LUPsolve(A,b);
