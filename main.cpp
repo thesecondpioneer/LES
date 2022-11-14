@@ -207,7 +207,8 @@ pair <vector <vector<double>>, vector <vector<double>>> QR (vector <vector<doubl
     }
     return make_pair(Q,R);
 }
-vector<double> QRsolve (pair <vector <vector<double>>, vector <vector<double>>> decomp, vector<vector<double>> b){ //returns a solution using the results of QR function
+vector<double> QRsolve (vector <vector<double>> A, vector <vector<double>> b){ //returns a solution using the results of QR function
+    pair <vector <vector<double>>, vector <vector<double>>> decomp = QR(A,b);
     vector<double> y = getcolumn(mmultiply(transpose(decomp.first),b),0);
     vector<double> x = y;
     for(int i = b.size()-1; i>=0; i--){
@@ -249,21 +250,43 @@ vector<double> FPISolve(vector <vector<double>> A, vector<vector<double>> b, dou
     vector<vector<double>> c = mnumm(mu,b);
     vector<vector<double>> x, xprev;
     x = c;
+    double k = 0;
     if(mnorm!= nullptr){
         double normb = mnorm(B);
         do{
             xprev = x;
             x = msub(mmultiply(B,x), mnumm(-1,c));
+            k++;
         }while((normb/(1-normb))* vnorm(msub(x,xprev)) > eps);
     }
     else{
         do{
             x = msub(mmultiply(B,x), mnumm(-1,c));
+            k++;
         }while(vnorm(msub(mmultiply(A,x),b)) > eps);
     }
+    x.push_back({k});
     return getcolumn(x,0);
 }
+bool ddom (vector<vector<double>> A){ //checks if the matrix is diagonally dominant
+    for(int i = 0; i < A.size(); i++){
+        double c = 0;
+        for (int j = 0; j < A.size(); j++){
+            c+=abs(A[i][j]);
+        }
+        if(2*abs(A[i][i]) < c){
+            return false;
+        }
+    }
+    return true;
+}
 vector <double> SeidelSolve (vector <vector<double>> A, vector<vector<double>> b, double eps){ //returns a solution approximated using Gauss-Seidel iterative process.
+    if (!ddom(A)){
+        vector<vector<double>> AT = transpose(A);
+        A = mmultiply(AT,A);
+        b = mmultiply(AT,b);
+        AT.clear();
+    }
     vector<vector<double>>x;
     vector <vector<double>> C = A;
     vector <vector<double>> d = b;
@@ -278,6 +301,7 @@ vector <double> SeidelSolve (vector <vector<double>> A, vector<vector<double>> b
         d[i][0] = d[i][0]/diag;
     }
     x = d;
+    double k = 0;
     do {
         for (int i = 0; i < C.size(); i++) {
             double xtemp = 0;
@@ -287,11 +311,13 @@ vector <double> SeidelSolve (vector <vector<double>> A, vector<vector<double>> b
             x[i][0] = xtemp;
             x[i][0] += d[i][0];
         }
+        k++;
     }while(vnorm(msub(mmultiply(A,x),b)) > eps);
+    x.push_back({k});
     return getcolumn(x,0);
 }
 int main() {
-     int n;
+    int n;
     cin >> n;
     vector <vector<double>> A(n);
     vector <vector<double>> b(n);
@@ -305,16 +331,25 @@ int main() {
             cin >> A[i][j];
         }
     }
+    cout << "LU decomposition" << endl;
     vector <double> x = LUPsolve(A,b);
     for (int i = 0; i < n; i++){
         cout << "x" << i << " = " << x[i] << endl;
     }
-    x = FPISolve(A,b,pow(10,-3));
+    cout << "QR decomposition" << endl;
+    x = QRsolve(A,b);
     for (int i = 0; i < n; i++){
         cout << "x" << i << " = " << x[i] << endl;
     }
+    x = FPISolve(A,b,pow(10,-3));
+    cout << "Fixed-point iterations" << endl;
+    for (int i = 0; i < n; i++){
+        cout << "x" << i << " = " << x[i] << endl;
+    }
+    cout << x[n] << " iterations" << endl;
     x = SeidelSolve(A,b,pow(10,-3));
     for (int i = 0; i < n; i++){
         cout << "x" << i << " = " << x[i] << endl;
     }
+    cout << x[n] << " iterations" << endl;
 }
