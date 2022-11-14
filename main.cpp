@@ -201,7 +201,7 @@ pair <vector <vector<double>>, vector <vector<double>>> QR (vector <vector<doubl
         normalize(w);
         insertblock(Qi, msub(E(Q.size()-i),mnumm(2, mmultiply(w, transpose(w)))),i);
         Q = mmultiply(Q,Qi);
-        Ri = mmultiply(getblock(Qi,i,2), getblock(R,i,2));
+        Ri = mmultiply(getblock(Qi,i,n-1), getblock(R,i,n-1));
         insertblock(R,Ri,i);
         y.resize(0);
     }
@@ -334,9 +334,13 @@ int main() {
             cin >> A[i][j];
         }
     }
-    for (int i = 0; i < n; i++){
-        cin >> xa[i];
-    }
+    //for (int i = 0; i < n; i++){
+ //       cin >> xa[i];
+  //  }
+    xa[0] = (0);
+    xa[1] = (0);
+    xa[2] = 0;
+    xa[3] = (double(1000)/1009);
     cin >> epsp;
     cout << "LU decomposition" << endl;
     vector <double> x = LUPsolve(A,b);
