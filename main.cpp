@@ -89,10 +89,10 @@ double NormInf(vector<vector<double>> A) { //  maximum absolute row sum of the m
         }
         if (s > result){
             result = s;
-            s = INT64_MIN;
+            s = 0;
         }
         else{
-            s = INT64_MIN;
+            s = 0;
         }
     }
     return result;
@@ -105,10 +105,10 @@ double NormInfCol(vector<vector<double>> A) { //maximum absolute column sum of t
         }
         if (s > result){
             result = s;
-            s = INT64_MIN;
+            s = 0;
         }
         else{
-            s = INT64_MIN;
+            s = 0;
         }
     }
     return result;
